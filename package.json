@@ -1,0 +1,24 @@
+{
+  "name": "split-bills-website",
+  "version": "1.0.0",
+  "description": "A web application to help users split their bills and receipts when dining out or grocery shopping.",
+  "main": "src/js/app.js",
+  "scripts": {
+    "start": "live-server src",
+    "build": "echo 'Build step not defined'",
+    "test": "echo 'No tests defined'"
+  },
+  "keywords": [
+    "bills",
+    "splitting",
+    "expenses",
+    "dining",
+    "grocery"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "live-server": "^1.2.1"
+  }
+}

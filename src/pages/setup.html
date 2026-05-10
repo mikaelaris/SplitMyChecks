@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Setup — $plitMyChe€ks</title>
+  <!-- Theme applied before render to prevent dark mode flash -->
+  <script src="../js/theme-init.js"></script>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+
+<div id="loader-wrapper">
+  <div class="loader-content">
+    <div class="loader-logo">$plitMyChe€ks</div>
+    <div class="loader-coins"><span></span><span></span><span></span></div>
+  </div>
+</div>
+
+<header>
+  <a class="header-logo" href="setup.html">$plit</a>
+  <nav class="progress-nav">
+    <a class="step-link active" href="setup.html">
+      <span class="step-num">1</span><span class="step-label">Setup</span>
+    </a>
+    <div class="step-divider"></div>
+    <a class="step-link" onclick="showActivitySelector('items')" style="cursor:pointer;">
+      <span class="step-num">2</span><span class="step-label">Add Items</span>
+    </a>
+    <div class="step-divider"></div>
+    <a class="step-link" onclick="showActivitySelector('results')" style="cursor:pointer;">
+      <span class="step-num">3</span><span class="step-label">Results</span>
+    </a>
+  </nav>
+  <div class="header-end">
+    <a href="profile.html" class="avatar-btn" id="header-avatar" title="Profile">?</a>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+      <span class="theme-toggle-text">🌙</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="page-hero">
+    <div class="step-badge">✦ Step 1 of 3</div>
+    <h1>Set up your activity</h1>
+    <p>Name your outing, pick a currency, and add the people splitting the bill.</p>
+  </div>
+
+  <div id="friends-banner" style="display:none;" class="tip-banner">
+    <span class="tip-icon">👥</span>
+    <span>You have friends saved! <button class="inline-link" id="load-friends-btn">Add them to this activity</button></span>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📝</span> Activity Details</div>
+    <form id="setup-form">
+      <div class="form-group">
+        <label for="activity-name">Activity name</label>
+        <input type="text" id="activity-name" class="form-control"
+               placeholder="e.g. Tokyo Trip, Birthday Dinner…" required>
+      </div>
+      <div class="form-group">
+        <label for="base-currency">Base currency</label>
+        <select id="base-currency" class="form-control" required>
+          <option value="">Select currency…</option>
+        </select>
+        <p class="helper-text">All amounts will be converted to this currency in the results.</p>
+      </div>
+      <div class="form-group">
+        <label for="num-people">Number of people</label>
+        <input type="number" id="num-people" class="form-control" min="1" max="20" placeholder="2" required>
+      </div>
+      <div id="people-names"></div>
+      <div style="margin-top:10px;">
+        <button type="submit" class="btn btn-primary btn-lg btn-block" id="save-btn">
+          Save &amp; Continue →
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="section-title">Your Activities</div>
+  <div id="activities-container"></div>
+</main>
+
+<div id="friends-pick-modal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h3>Add friends to activity</h3>
+    <p style="font-size:0.85rem;color:var(--text-3);margin-bottom:14px;">Select friends to pre-fill as participants:</p>
+    <div id="friends-pick-list" style="display:flex;flex-direction:column;gap:8px;max-height:280px;overflow-y:auto;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost close-modal">Cancel</button>
+      <button class="btn btn-primary" id="confirm-friends-btn">Add selected</button>
+    </div>
+  </div>
+</div>
+
+<div id="activity-select-modal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h3>Choose an activity</h3>
+    <div id="activity-select-list" class="activity-select-options"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-block close-modal">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="../js/eventManager.js"></script>
+<script src="../js/navigation.js"></script>
+</body>
+</html>

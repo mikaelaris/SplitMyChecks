@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Results — $plitMyChe€ks</title>
+  <!-- Theme applied before render to prevent dark mode flash -->
+  <script src="../js/theme-init.js"></script>
+  <link rel="stylesheet" href="../css/main.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://unpkg.com/jspdf-autotable@3.5.28/dist/jspdf.plugin.autotable.js"></script>
+</head>
+<body>
+
+<header>
+  <a class="header-logo" href="setup.html">$plit</a>
+  <nav class="progress-nav">
+    <a class="step-link completed" href="setup.html">
+      <span class="step-num">✓</span><span class="step-label">Setup</span>
+    </a>
+    <div class="step-divider"></div>
+    <a class="step-link completed" onclick="showActivitySelector('items')" style="cursor:pointer;">
+      <span class="step-num">✓</span><span class="step-label">Add Items</span>
+    </a>
+    <div class="step-divider"></div>
+    <a class="step-link active">
+      <span class="step-num">3</span><span class="step-label">Results</span>
+    </a>
+  </nav>
+  <div class="header-end">
+    <a href="profile.html" class="avatar-btn" id="header-avatar" title="Profile">?</a>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+      <span class="theme-toggle-text">🌙</span>
+    </button>
+  </div>
+</header>
+
+<main class="wide">
+  <div class="page-hero">
+    <div class="step-badge">✦ Step 3 of 3</div>
+    <h1>Results for <span id="activity-name" style="color:var(--brand)">…</span></h1>
+    <p>Here's who owes what. Share the breakdown or export as PDF.</p>
+  </div>
+
+  <div class="results-summary" id="results-summary"></div>
+
+  <div class="btn-group">
+    <button class="btn btn-secondary" id="toggle-rates">💱 Exchange rates</button>
+    <button class="btn btn-secondary" id="share-button">📤 Share</button>
+    <button class="btn btn-primary" id="download-pdf">⬇ PDF</button>
+  </div>
+
+  <div id="conversion-rate"></div>
+
+  <div class="section-title">Balances</div>
+  <div class="balance-list" id="balance-list"></div>
+
+  <div class="section-title">Payment instructions</div>
+  <div class="payment-instructions-list" id="payment-instructions"></div>
+
+  <!-- Pay directly via saved method -->
+  <div id="pay-direct-section" style="display:none;">
+    <div class="section-title">Pay directly</div>
+    <div class="tip-banner">
+      <span class="tip-icon">💳</span>
+      <span id="pay-direct-text">Some participants have saved payment methods.</span>
+    </div>
+    <div id="pay-direct-list" class="payment-instructions-list"></div>
+  </div>
+
+  <div class="section-title" style="margin-top:32px;">All expenses</div>
+  <div class="items-grid-results" id="item-list"></div>
+</main>
+
+<div class="step-footer">
+  <div class="step-footer-info">All done? Share or export above.</div>
+  <div class="step-footer-actions">
+    <button class="btn btn-ghost" id="back-to-items">← Back to items</button>
+    <button class="btn btn-primary" id="new-activity-btn">＋ New activity</button>
+  </div>
+</div>
+
+<div id="share-modal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h3>Share results</h3>
+    <div class="share-options">
+      <button class="share-option-button" id="copy-link">📋 Copy link</button>
+      <button class="share-option-button" id="share-whatsapp">📱 WhatsApp</button>
+      <button class="share-option-button" id="share-email">✉️ Email</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-block close-modal">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="activity-select-modal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h3>Choose an activity</h3>
+    <div id="activity-select-list" class="activity-select-options"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-block close-modal">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="../js/results.js"></script>
+<script src="../js/navigation.js"></script>
+</body>
+</html>

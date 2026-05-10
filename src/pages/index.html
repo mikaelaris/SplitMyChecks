@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>$plitMyChe€ks — Split bills, not friendships</title>
+  <!-- Theme applied before render to prevent dark mode flash -->
+  <script src="../js/theme-init.js"></script>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body class="auth-body">
+
+<div class="auth-split">
+
+  <!-- Left panel: branding -->
+  <div class="auth-brand">
+    <div class="auth-brand-inner">
+      <div class="brand-logo">$plitMyChe€ks</div>
+      <p class="brand-tagline">Split bills, not friendships.</p>
+      <div class="brand-features">
+        <div class="brand-feat"><span>⚡</span> Instant expense splitting</div>
+        <div class="brand-feat"><span>🌍</span> Multi-currency with live rates</div>
+        <div class="brand-feat"><span>👥</span> Add friends &amp; pay directly</div>
+        <div class="brand-feat"><span>📊</span> Beautiful PDF reports</div>
+        <div class="brand-feat"><span>🎨</span> Personalise your experience</div>
+      </div>
+      <div class="brand-testimonial">
+        <div class="testimonial-text">"Finally, a bill splitter that doesn't make me feel like I'm filing taxes."</div>
+        <div class="testimonial-author">— A very relieved traveller</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right panel: auth forms -->
+  <div class="auth-panel">
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login">Sign in</button>
+        <button class="auth-tab" data-tab="register">Create account</button>
+      </div>
+
+      <!-- Login form -->
+      <form class="auth-form active" id="login-form" data-form="login" autocomplete="off">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" class="form-control" id="login-email" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="input-pw-wrap">
+            <input type="password" class="form-control" id="login-password" placeholder="••••••••" autocomplete="current-password">
+            <button type="button" class="pw-toggle" data-target="login-password">👁</button>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg">Sign in</button>
+        <div class="auth-divider"><span>or</span></div>
+        <button type="button" class="btn btn-ghost btn-block" id="guest-btn">
+          Continue as guest →
+        </button>
+        <p class="auth-note">Guest data is saved locally. <a href="#" id="import-link">Import existing data?</a></p>
+      </form>
+
+      <!-- Register form -->
+      <form class="auth-form" id="register-form" data-form="register" autocomplete="off">
+        <div class="name-row">
+          <div class="form-group">
+            <label>First name</label>
+            <input type="text" class="form-control" id="reg-first" placeholder="Alex" autocomplete="given-name">
+          </div>
+          <div class="form-group">
+            <label>Last name</label>
+            <input type="text" class="form-control" id="reg-last" placeholder="Kim" autocomplete="family-name">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" class="form-control" id="reg-email" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" class="form-control" id="reg-username" placeholder="alexkim" autocomplete="username">
+          <p class="helper-text">Friends can find you by username</p>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="input-pw-wrap">
+            <input type="password" class="form-control" id="reg-password" placeholder="At least 8 characters" autocomplete="new-password">
+            <button type="button" class="pw-toggle" data-target="reg-password">👁</button>
+          </div>
+          <div class="pw-strength" id="pw-strength"></div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg">Create account</button>
+        <div class="auth-divider"><span>or</span></div>
+        <button type="button" class="btn btn-ghost btn-block" id="guest-btn-2">
+          Continue as guest →
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="../js/auth.js"></script>
+</body>
+</html>

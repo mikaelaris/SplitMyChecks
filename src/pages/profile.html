@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile — $plitMyChe€ks</title>
+  <!-- Theme applied before render to prevent dark mode flash -->
+  <script src="../js/theme-init.js"></script>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/auth.css">
+  <link rel="stylesheet" href="../css/profile-improvements.css">
+</head>
+<body>
+
+<div id="loader-wrapper">
+  <div class="loader-content">
+    <div class="loader-logo">$plitMyChe€ks</div>
+    <div class="loader-coins"><span></span><span></span><span></span></div>
+  </div>
+</div>
+
+<header>
+  <a class="header-logo" href="setup.html">$plit</a>
+  <nav class="progress-nav">
+    <a class="step-link" href="setup.html">
+      <span class="step-num">1</span>
+      <span class="step-label">Setup</span>
+    </a>
+    <div class="step-divider"></div>
+    <a class="step-link" onclick="showActivitySelector('items')" style="cursor:pointer;">
+      <span class="step-num">2</span>
+      <span class="step-label">Add Items</span>
+    </a>
+    <div class="step-divider"></div>
+    <a class="step-link" onclick="showActivitySelector('results')" style="cursor:pointer;">
+      <span class="step-num">3</span>
+      <span class="step-label">Results</span>
+    </a>
+  </nav>
+  <div class="header-end">
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+      <span class="theme-toggle-text">🌙</span>
+    </button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ── Profile Hero ─────────────────────────────────────── -->
+  <div class="profile-hero-card">
+    <div class="profile-hero-left">
+      <div class="avatar-upload-wrap">
+        <div class="avatar-lg" id="profile-avatar">?</div>
+        <button class="avatar-edit-btn" id="avatar-edit-btn" title="Change colour">🎨</button>
+      </div>
+      <div class="profile-hero-info">
+        <h1 id="profile-name">Guest User</h1>
+        <p id="profile-username" class="profile-sub">@guest</p>
+        <div class="profile-badges">
+          <span class="profile-badge badge-type" id="profile-type-badge">👤 Guest</span>
+          <span class="profile-badge badge-count" id="profile-activities-badge">0 activities</span>
+        </div>
+      </div>
+    </div>
+    <div class="profile-hero-actions">
+      <button class="btn btn-primary" id="edit-profile-btn">✏️ Edit profile</button>
+      <button class="btn-signout" id="logout-btn">Sign out</button>
+    </div>
+  </div>
+
+  <!-- ── Tabs ─────────────────────────────────────────────── -->
+  <div class="profile-tabs">
+    <button class="profile-tab active" data-tab="friends">👥 Friends</button>
+    <button class="profile-tab" data-tab="payments">💳 Payments</button>
+    <button class="profile-tab" data-tab="customize">🎨 Customise</button>
+    <button class="profile-tab" data-tab="account">⚙️ Account</button>
+  </div>
+
+  <!-- ── FRIENDS TAB ───────────────────────────────────────── -->
+  <div class="profile-tab-content active" id="tab-friends">
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🔍</span> Find a friend</div>
+      <div class="add-friend-row">
+        <input type="text" class="form-control" id="friend-search" placeholder="Search by username or name…">
+        <button class="btn btn-primary" id="add-friend-btn">Add</button>
+      </div>
+      <div class="card-divider">
+        <span>or add manually</span>
+      </div>
+      <div class="add-friend-manual" id="add-manual-form">
+        <div class="name-row">
+          <input type="text" class="form-control" id="manual-name" placeholder="Name">
+          <input type="text" class="form-control" id="manual-email" placeholder="Email (optional)">
+        </div>
+        <button class="btn btn-secondary" id="add-manual-btn">Add manually</button>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <span class="section-title" style="margin:0;">Friends</span>
+      <span class="section-count" id="friends-count">0</span>
+    </div>
+    <div id="friends-list">
+      <div class="empty-state">
+        <div class="empty-icon">👋</div>
+        <p class="empty-title">No friends yet</p>
+        <p class="empty-sub">Add friends to quickly include them in activities.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PAYMENTS TAB ──────────────────────────────────────── -->
+  <div class="profile-tab-content" id="tab-payments">
+
+    <div class="card">
+      <div class="card-title"><span class="icon">➕</span> Add payment method</div>
+      <div class="form-group">
+        <label>Type</label>
+        <select class="form-control" id="payment-type">
+          <option value="">Select type…</option>
+          <option value="paypal">PayPal</option>
+          <option value="venmo">Venmo</option>
+          <option value="revolut">Revolut</option>
+          <option value="wise">Wise</option>
+          <option value="bank">Bank transfer (IBAN)</option>
+          <option value="cashapp">Cash App</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-group" id="payment-detail-group">
+        <label id="payment-detail-label">Handle / account</label>
+        <input type="text" class="form-control" id="payment-detail" placeholder="@yourhandle">
+      </div>
+      <div class="form-group">
+        <label>Nickname <span style="font-weight:400;color:var(--text-3);">(optional)</span></label>
+        <input type="text" class="form-control" id="payment-nickname" placeholder="e.g. My PayPal">
+      </div>
+      <button class="btn btn-primary" id="save-payment-btn">Save method</button>
+    </div>
+
+    <div class="section-header">
+      <span class="section-title" style="margin:0;">Saved methods</span>
+      <span class="section-count" id="payments-count">0</span>
+    </div>
+    <div id="payments-list">
+      <div class="empty-state">
+        <div class="empty-icon">💳</div>
+        <p class="empty-title">No payment methods saved</p>
+        <p class="empty-sub">Friends can pay you directly from the results page.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CUSTOMISE TAB ─────────────────────────────────────── -->
+  <div class="profile-tab-content" id="tab-customize">
+
+    <!-- Accent colour -->
+    <div class="card">
+      <div class="card-title"><span class="icon">🎨</span> Accent colour</div>
+      <div class="colour-grid" id="colour-grid">
+        <button class="colour-swatch active" data-colour="#FF6B4A" style="background:#FF6B4A;" title="Coral (default)"></button>
+        <button class="colour-swatch" data-colour="#6C63FF" style="background:#6C63FF;" title="Violet"></button>
+        <button class="colour-swatch" data-colour="#22C55E" style="background:#22C55E;" title="Emerald"></button>
+        <button class="colour-swatch" data-colour="#0EA5E9" style="background:#0EA5E9;" title="Sky"></button>
+        <button class="colour-swatch" data-colour="#F59E0B" style="background:#F59E0B;" title="Amber"></button>
+        <button class="colour-swatch" data-colour="#EC4899" style="background:#EC4899;" title="Pink"></button>
+        <button class="colour-swatch" data-colour="#14B8A6" style="background:#14B8A6;" title="Teal"></button>
+        <button class="colour-swatch" data-colour="#8B5CF6" style="background:#8B5CF6;" title="Purple"></button>
+        <button class="colour-swatch" data-colour="#EF4444" style="background:#EF4444;" title="Red"></button>
+        <button class="colour-swatch" data-colour="#1E293B" style="background:#1E293B;" title="Slate"></button>
+      </div>
+      <div class="custom-colour-row">
+        <label>Custom</label>
+        <input type="color" id="custom-colour" value="#FF6B4A" class="colour-picker">
+        <button class="btn btn-secondary btn-sm" id="apply-custom-colour">Apply</button>
+      </div>
+    </div>
+
+    <!-- Appearance -->
+    <div class="card">
+      <div class="card-title"><span class="icon">🌙</span> Appearance</div>
+      <div class="appearance-options">
+        <button class="appearance-opt" data-theme="light" id="theme-light">☀️ Light</button>
+        <button class="appearance-opt" data-theme="dark" id="theme-dark">🌙 Dark</button>
+        <button class="appearance-opt" data-theme="system" id="theme-system">💻 System</button>
+      </div>
+    </div>
+
+    <!-- Font size -->
+    <div class="card">
+      <div class="card-title"><span class="icon">🔤</span> Font size</div>
+      <div class="font-size-row">
+        <span class="font-label-sm">A</span>
+        <input type="range" id="font-size-slider" min="14" max="20" step="1" value="16" class="range-slider">
+        <span class="font-label-lg">A</span>
+      </div>
+      <p class="helper-text" style="text-align:center;" id="font-size-label">16px (default)</p>
+      <div class="font-preview" id="font-preview">The quick brown fox splits the bill.</div>
+    </div>
+
+    <!-- Default currency -->
+    <div class="card">
+      <div class="card-title"><span class="icon">🌐</span> Default currency</div>
+      <select class="form-control" id="default-currency"></select>
+      <p class="helper-text" style="margin-top:6px;">Pre-selected when creating new activities.</p>
+    </div>
+
+    <!-- Preferences -->
+    <div class="card">
+      <div class="card-title"><span class="icon">🔢</span> Preferences</div>
+      <div class="pref-row">
+        <div class="pref-info">
+          <div class="pref-label">Round amounts</div>
+          <div class="pref-desc">Show whole numbers in results</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="pref-round">
+          <span class="toggle-knob"></span>
+        </label>
+      </div>
+      <div class="pref-row">
+        <div class="pref-info">
+          <div class="pref-label">Auto-select everyone</div>
+          <div class="pref-desc">All participants selected by default</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="pref-autoselect" checked>
+          <span class="toggle-knob"></span>
+        </label>
+      </div>
+      <div class="pref-row">
+        <div class="pref-info">
+          <div class="pref-label">Compact item list</div>
+          <div class="pref-desc">Denser view on the items page</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="pref-compact">
+          <span class="toggle-knob"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ACCOUNT TAB ───────────────────────────────────────── -->
+  <div class="profile-tab-content" id="tab-account">
+
+    <div class="card" id="account-card">
+      <div class="card-title"><span class="icon">👤</span> Account details</div>
+      <div id="account-guest-msg" class="tip-banner">
+        <span class="tip-icon">💡</span>
+        <span>You're browsing as a guest. <a href="index.html" style="color:var(--brand);font-weight:600;">Create an account</a> to sync across devices.</span>
+      </div>
+      <div id="account-details" style="display:none;">
+        <div class="account-detail-row">
+          <span class="detail-label">Name</span>
+          <span class="detail-value" id="acc-name">—</span>
+        </div>
+        <div class="account-detail-row">
+          <span class="detail-label">Username</span>
+          <span class="detail-value" id="acc-username">—</span>
+        </div>
+        <div class="account-detail-row">
+          <span class="detail-label">Email</span>
+          <span class="detail-value" id="acc-email">—</span>
+        </div>
+        <div class="account-detail-row">
+          <span class="detail-label">Member since</span>
+          <span class="detail-value" id="acc-since">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">📦</span> Your data</div>
+      <p class="pref-desc" style="margin-bottom:14px;" id="data-summary">0 activities · 0 items stored locally</p>
+      <div class="data-actions">
+        <button class="btn btn-secondary" id="export-data-btn">⬇ Export</button>
+        <button class="btn btn-secondary" id="import-data-btn">⬆ Import</button>
+        <input type="file" id="import-file-input" accept=".json" style="display:none;">
+      </div>
+    </div>
+
+    <div class="card danger-card">
+      <div class="card-title"><span class="icon icon-danger">⚠️</span> Danger zone</div>
+      <div class="danger-actions">
+        <button class="btn btn-danger-outline" id="clear-data-btn">🗑 Clear all local data</button>
+        <button class="btn btn-danger-outline" id="delete-account-btn" style="display:none;">Delete account</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- Edit profile modal -->
+<div class="modal" id="edit-profile-modal" style="display:none;">
+  <div class="modal-content">
+    <h3>Edit profile</h3>
+    <div class="form-group">
+      <label>Display name</label>
+      <input type="text" class="form-control" id="edit-display-name">
+    </div>
+    <div class="form-group">
+      <label>Bio <span style="font-weight:400;color:var(--text-3);">(optional)</span></label>
+      <input type="text" class="form-control" id="edit-bio" placeholder="e.g. Always pays for the snacks 😄">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost close-modal">Cancel</button>
+      <button class="btn btn-primary" id="save-profile-btn">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Avatar colour picker modal -->
+<div class="modal" id="avatar-modal" style="display:none;">
+  <div class="modal-content">
+    <h3>Choose avatar colour</h3>
+    <div class="colour-grid" id="avatar-colour-grid">
+      <button class="colour-swatch" data-colour="#FF6B4A" style="background:#FF6B4A;"></button>
+      <button class="colour-swatch" data-colour="#6C63FF" style="background:#6C63FF;"></button>
+      <button class="colour-swatch" data-colour="#22C55E" style="background:#22C55E;"></button>
+      <button class="colour-swatch" data-colour="#0EA5E9" style="background:#0EA5E9;"></button>
+      <button class="colour-swatch" data-colour="#F59E0B" style="background:#F59E0B;"></button>
+      <button class="colour-swatch" data-colour="#EC4899" style="background:#EC4899;"></button>
+      <button class="colour-swatch" data-colour="#14B8A6" style="background:#14B8A6;"></button>
+      <button class="colour-swatch" data-colour="#8B5CF6" style="background:#8B5CF6;"></button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost close-modal">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Activity Selector Modal -->
+<div id="activity-select-modal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h3>Choose an activity</h3>
+    <div id="activity-select-list" class="activity-select-options"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-block close-modal">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/profile.js"></script>
+<script src="../js/navigation.js"></script>
+</body>
+</html>

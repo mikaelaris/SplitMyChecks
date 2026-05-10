@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Items — $plitMyChe€ks</title>
+  <!-- Theme applied before render to prevent dark mode flash -->
+  <script src="../js/theme-init.js"></script>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+
+<div id="loader-wrapper">
+  <div class="loader-content">
+    <div class="loader-logo">$plitMyChe€ks</div>
+    <div class="loader-coins"><span></span><span></span><span></span></div>
+  </div>
+</div>
+
+<header>
+  <a class="header-logo" href="setup.html">$plit</a>
+  <nav class="progress-nav">
+    <a class="step-link completed" href="setup.html">
+      <span class="step-num">✓</span><span class="step-label">Setup</span>
+    </a>
+    <div class="step-divider"></div>
+    <a class="step-link active">
+      <span class="step-num">2</span><span class="step-label">Add Items</span>
+    </a>
+    <div class="step-divider"></div>
+    <a class="step-link" onclick="showActivitySelector('results')" style="cursor:pointer;">
+      <span class="step-num">3</span><span class="step-label">Results</span>
+    </a>
+  </nav>
+  <div class="header-end">
+    <a href="profile.html" class="avatar-btn" id="header-avatar" title="Profile">?</a>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+      <span class="theme-toggle-text">🌙</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="page-hero">
+    <div class="step-badge">✦ Step 2 of 3</div>
+    <h1 id="page-title">Add your items</h1>
+    <p>Enter each expense — who paid, how much, and who it's split between.</p>
+  </div>
+
+  <div class="tip-banner">
+    <span class="tip-icon">💡</span>
+    <span>Tip: Select <strong>Everyone</strong> to include all participants, or tap names individually to customise.</span>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">➕</span> Add an expense</div>
+    <form id="item-form">
+      <div class="form-group">
+        <label for="item-name">Item name</label>
+        <input type="text" id="item-name" class="form-control"
+               placeholder="e.g. Dinner, Taxi, Hotel night…" required>
+      </div>
+      <div class="form-group">
+        <label>Cost</label>
+        <div class="input-row">
+          <input type="number" id="item-cost" class="form-control" step="0.01" min="0" placeholder="0.00" required>
+          <select id="item-currency" class="form-control" required></select>
+        </div>
+        <div id="conversion-preview" class="conversion-preview"></div>
+      </div>
+      <div class="form-group">
+        <label for="payment-status">Who paid?</label>
+        <select id="payment-status" class="form-control" required>
+          <option value="">Select…</option>
+          <option value="paid">Someone paid already</option>
+          <option value="pending">Not paid yet</option>
+        </select>
+      </div>
+      <div id="buyer-section" class="form-group" style="display:none;">
+        <label for="item-buyer">Paid by</label>
+        <select id="item-buyer" class="form-control">
+          <option value="">Select person…</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Split between</label>
+        <div style="display:flex;gap:8px;margin-bottom:10px;">
+          <button type="button" class="btn btn-secondary" id="select-everyone" style="font-size:0.82rem;padding:6px 12px;">✓ Everyone</button>
+          <button type="button" class="btn btn-ghost" id="clear-all" style="font-size:0.82rem;padding:6px 12px;">Clear all</button>
+        </div>
+        <div id="specific-people" class="participant-chips"></div>
+      </div>
+      <div class="form-group">
+        <label for="split-type">Split method</label>
+        <select id="split-type" class="form-control">
+          <option value="equal">⚖️ Equal split</option>
+          <option value="custom">✏️ Custom percentages</option>
+        </select>
+      </div>
+      <div id="custom-ratio-container" style="display:none;" class="card">
+        <div class="card-title" style="margin-bottom:12px;font-size:0.9rem;">
+          <span class="icon" style="width:24px;height:24px;font-size:0.8rem;">%</span> Custom split
+        </div>
+        <div id="ratio-inputs"></div>
+        <div class="ratio-total-bar"><div class="ratio-total-fill" id="ratio-fill" style="width:0%"></div></div>
+        <div class="ratio-total-label">
+          <span>Total</span><span><span id="ratio-sum">0</span>%</span>
+        </div>
+        <p class="ratio-warning" id="ratio-warning">Percentages must add up to 100%</p>
+      </div>
+      <div style="margin-top:18px;">
+        <button type="submit" class="btn btn-primary btn-block">Add expense</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="section-title">Added expenses (<span id="item-count">0</span>)</div>
+  <div id="item-entries"></div>
+</main>
+
+<div class="step-footer">
+  <div class="step-footer-info">
+    <span id="footer-activity-name"></span> · <strong id="footer-item-count">0 items</strong>
+  </div>
+  <div class="step-footer-actions">
+    <a href="setup.html" class="btn btn-ghost">← Setup</a>
+    <button class="btn btn-primary" id="next-to-results">View Results →</button>
+  </div>
+</div>
+
+<div id="activity-select-modal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h3>Choose an activity</h3>
+    <div id="activity-select-list" class="activity-select-options"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-block close-modal">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="../js/items.js"></script>
+<script src="../js/navigation.js"></script>
+
+<script>
+  // Show loader before navigating to results
+  document.addEventListener('DOMContentLoaded', () => {
+    const nextBtn = document.getElementById('next-to-results');
+    if (nextBtn) {
+      nextBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const loader = document.getElementById('loader-wrapper');
+        if (loader) loader.classList.remove('loader-hidden');
+        const activityId = new URLSearchParams(window.location.search).get('activity');
+        setTimeout(() => {
+          window.location.href = `results.html?activity=${activityId}`;
+        }, 600);
+      }, true); // capture phase so it fires before items.js binds same button
+    }
+  });
+</script>
+</body>
+</html>
