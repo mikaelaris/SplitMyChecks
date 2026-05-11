@@ -156,64 +156,99 @@ function updateConversionPreview() {
   preview.innerHTML = `≈ ${formatCurrency(converted, to)} in base currency`;
 }
 
+// Tracks which ratio inputs the user has manually edited — these are "locked"
+// and won't be touched by auto-balance when another input changes.
+const lockedRatioInputs = new Set();
+
 function initializeCustomRatios(people) {
   const container = document.getElementById('ratio-inputs');
+  // Reset locks whenever the participant list changes
+  lockedRatioInputs.clear();
+
   if (people.length === 0) {
     container.innerHTML = '<p style="color:var(--text-3);font-size:0.85rem;">Select participants first.</p>';
     updateRatioBar();
     return;
   }
+
   const equalShare = Math.floor(100 / people.length);
   const remainder  = 100 - (equalShare * people.length);
+
   container.innerHTML = people.map((person, i) => `
-    <div class="ratio-row">
+    <div class="ratio-row" id="ratio-row-${i}">
       <label>${person}</label>
       <input type="number" id="ratio-${person.replace(/\s+/g,'-')}" name="${person}"
              min="0" max="100" step="1" value="${equalShare + (i === 0 ? remainder : 0)}">
       <span class="pct">%</span>
+      <span class="ratio-lock" id="lock-${i}" title="Click to unlock and allow auto-balance"
+            style="display:none;cursor:pointer;font-size:0.8rem;opacity:0.5;margin-left:4px;user-select:none;">🔒</span>
     </div>`).join('');
 
-  // ── FIX: Auto-balance other inputs when one changes ──────────────────────
-  container.querySelectorAll('input').forEach(inp => {
-    inp.addEventListener('input', () => autoBalance(inp, people));
+  container.querySelectorAll('input').forEach((inp, i) => {
+    inp.addEventListener('input', () => autoBalance(inp, i));
   });
+
   updateRatioBar();
 }
 
 /**
- * When the user edits one input, distribute the remaining percentage
- * evenly among all the OTHER inputs, keeping their relative weights.
+ * When the user edits one input:
+ *  1. Mark it as locked (won't be touched by future auto-balances).
+ *  2. Distribute the remaining % among UNLOCKED inputs only.
+ *  3. If all others are locked, just update the bar and warn — don't move anything.
  */
-function autoBalance(changedInput, people) {
+function autoBalance(changedInput, changedIdx) {
   const allInputs = Array.from(document.querySelectorAll('#ratio-inputs input'));
+
+  // Clamp the changed value
   const changedVal = Math.min(100, Math.max(0, parseFloat(changedInput.value) || 0));
   changedInput.value = changedVal;
 
-  const others = allInputs.filter(i => i !== changedInput);
-  if (others.length === 0) { updateRatioBar(); return; }
+  // Lock this input and show the lock icon
+  lockedRatioInputs.add(changedInput.name);
+  const lockEl = document.getElementById(`lock-${changedIdx}`);
+  if (lockEl) {
+    lockEl.style.display = 'inline';
+    lockEl.onclick = () => {
+      lockedRatioInputs.delete(changedInput.name);
+      lockEl.style.display = 'none';
+    };
+  }
 
-  const remaining = Math.max(0, 100 - changedVal);
+  // Inputs that are free to be adjusted
+  const freeInputs = allInputs.filter(i => !lockedRatioInputs.has(i.name) && i !== changedInput);
 
-  // Sum of the other inputs before adjustment
-  const othersSum = others.reduce((s, i) => s + (parseFloat(i.value) || 0), 0);
+  if (freeInputs.length === 0) {
+    // Nothing to redistribute — just show the bar (may go over/under 100)
+    updateRatioBar();
+    return;
+  }
 
-  if (othersSum === 0) {
-    // Distribute remaining evenly
-    const share = remaining / others.length;
-    others.forEach(i => { i.value = +share.toFixed(1); });
+  // How much is left after all locked inputs + the changed input
+  const lockedSum = allInputs
+    .filter(i => lockedRatioInputs.has(i.name))
+    .reduce((s, i) => s + (parseFloat(i.value) || 0), 0);
+
+  const remaining = Math.max(0, 100 - lockedSum);
+  const freeSum   = freeInputs.reduce((s, i) => s + (parseFloat(i.value) || 0), 0);
+
+  if (freeSum === 0) {
+    // Distribute remaining evenly across free inputs
+    const share = remaining / freeInputs.length;
+    freeInputs.forEach(i => { i.value = +share.toFixed(1); });
   } else {
-    // Distribute proportionally to current weights
-    others.forEach(i => {
-      const w = (parseFloat(i.value) || 0) / othersSum;
+    // Distribute proportionally to free inputs' current weights
+    freeInputs.forEach(i => {
+      const w = (parseFloat(i.value) || 0) / freeSum;
       i.value = +(w * remaining).toFixed(1);
     });
   }
 
-  // Fix rounding so the total is exactly 100
+  // Fix floating-point rounding: apply any tiny remainder to the first free input
   const newSum = allInputs.reduce((s, i) => s + (parseFloat(i.value) || 0), 0);
   const diff   = 100 - newSum;
-  if (Math.abs(diff) > 0.001 && others.length > 0) {
-    others[0].value = +(parseFloat(others[0].value) + diff).toFixed(1);
+  if (Math.abs(diff) > 0.001) {
+    freeInputs[0].value = +(parseFloat(freeInputs[0].value) + diff).toFixed(1);
   }
 
   updateRatioBar();
