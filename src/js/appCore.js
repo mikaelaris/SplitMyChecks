@@ -89,5 +89,42 @@ function adjustHex(hex, amt) {
 
 // Shared helpers used across pages
 export function getPrefs() { return JSON.parse(localStorage.getItem('smc_prefs') || '{}'); }
-export function getFriends() { return JSON.parse(localStorage.getItem('smc_friends') || '[]'); }
-export function getPaymentMethods() { return JSON.parse(localStorage.getItem('smc_payments') || '[]'); }
+
+// ── User-scoped helpers ───────────────────────────────────────
+// Each user (including guest) gets their own isolated data so
+// switching accounts never leaks data across users.
+
+function _userId() {
+  try {
+    const u = JSON.parse(localStorage.getItem('smc_current_user') || 'null');
+    return u ? String(u.id) : 'guest';
+  } catch { return 'guest'; }
+}
+
+export function friendsKey()        { return `smc_friends_${_userId()}`; }
+export function paymentsKey()       { return `smc_payments_${_userId()}`; }
+export function conversationsKey()  { return `smc_conversations_${_userId()}`; }
+
+export function getFriends()        { return JSON.parse(localStorage.getItem(friendsKey())        || '[]'); }
+export function saveFriends(f)      { localStorage.setItem(friendsKey(),       JSON.stringify(f)); }
+export function getPaymentMethods() { return JSON.parse(localStorage.getItem(paymentsKey())       || '[]'); }
+export function savePaymentMethods(p){ localStorage.setItem(paymentsKey(),     JSON.stringify(p)); }
+export function getConversations()  { return JSON.parse(localStorage.getItem(conversationsKey())  || '[]'); }
+export function saveConversations(c){ localStorage.setItem(conversationsKey(), JSON.stringify(c)); }
+
+// ── User-scoped activity storage ─────────────────────────────
+// Each account's activities are stored under a unique key so that
+// logging in as a different user never shows another user's data.
+export function activitiesKey() {
+  const user = JSON.parse(localStorage.getItem('smc_current_user') || 'null');
+  const id   = user ? String(user.id) : 'guest';
+  return `activities_${id}`;
+}
+
+export function getActivities() {
+  return JSON.parse(localStorage.getItem(activitiesKey()) || '[]');
+}
+
+export function saveActivities(activities) {
+  localStorage.setItem(activitiesKey(), JSON.stringify(activities));
+}

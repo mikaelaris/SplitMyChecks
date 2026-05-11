@@ -1,11 +1,22 @@
 // navigation.js — Activity-aware navigation modal
 
+// Mirrors the key logic from appCore.js (can't import ES modules here)
+function _activitiesKey() {
+  try {
+    const user = JSON.parse(localStorage.getItem('smc_current_user') || 'null');
+    const id   = user ? String(user.id) : 'guest';
+    return `activities_${id}`;
+  } catch (e) {
+    return 'activities_guest';
+  }
+}
+
 function showActivitySelector(destination) {
   const modal = document.getElementById('activity-select-modal');
   const list  = document.getElementById('activity-select-list');
   if (!modal || !list) return;
 
-  const activities = JSON.parse(localStorage.getItem('activities')) || [];
+  const activities = JSON.parse(localStorage.getItem(_activitiesKey()) || '[]');
 
   if (activities.length === 0) {
     list.innerHTML = `

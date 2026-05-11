@@ -1,5 +1,5 @@
 import { convertCurrency, formatCurrency, showSuccessMessage, currencies } from './utils.js';
-import { initApp, getPaymentMethods, getPrefs } from './appCore.js';
+import { initApp, getPaymentMethods, getPrefs, getActivities } from './appCore.js';
 
 let currentActivity = null;
 let liveRates = null;
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const activityId = urlParams.get('activity');
   if (!activityId) { window.location.href = 'setup.html'; return; }
 
-  const activities  = JSON.parse(localStorage.getItem('activities')) || [];
+  const activities  = getActivities();
   currentActivity   = activities.find(a => a.id === Number(activityId));
   if (!currentActivity) { window.location.href = 'setup.html'; return; }
 

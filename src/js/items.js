@@ -1,5 +1,5 @@
 import { convertCurrency, formatCurrency, showSuccessMessage, populateCurrencySelect } from './utils.js';
-import { initApp, getPrefs, getFriends } from './appCore.js';
+import { initApp, getPrefs, getFriends, getActivities, saveActivities } from './appCore.js';
 
 let currentActivity = null;
 
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => loaderWrapper?.classList.add('loader-hidden'), remaining);
   });
 
-  const activities = JSON.parse(localStorage.getItem('activities')) || [];
+  const activities = getActivities();
   currentActivity = activities.find(a => a.id === parseInt(activityId));
   if (!currentActivity) { window.location.href = 'setup.html'; return; }
 
@@ -292,10 +292,10 @@ function validateItem(item) {
 }
 
 function saveActivity() {
-  const activities = JSON.parse(localStorage.getItem('activities')) || [];
+  const activities = getActivities();
   const idx = activities.findIndex(a => a.id === currentActivity.id);
   if (idx !== -1) activities[idx] = currentActivity;
-  localStorage.setItem('activities', JSON.stringify(activities));
+  saveActivities(activities);
 }
 
 function displayItems() {

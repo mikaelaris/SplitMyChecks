@@ -1,5 +1,5 @@
 import { showSuccessMessage, populateCurrencySelect, formatCurrency } from './utils.js';
-import { initApp, getFriends, getPrefs } from './appCore.js';
+import { initApp, getFriends, getPrefs, getActivities, saveActivities } from './appCore.js';
 
 let editingActivityId = null;
 
@@ -23,11 +23,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const setupForm = document.getElementById('setup-form');
   const saveBtn = document.getElementById('save-btn');
 
-  // ── FIX: Preserve existing names when changing num-people ──────────────────
+  // ── Preserve existing names when changing num-people ───────────────────────
   numPeopleInput.addEventListener('input', function () {
     const num = Math.min(parseInt(this.value) || 0, 20);
 
-    // Capture whatever is currently typed before rebuilding
     const existing = {};
     peopleNamesContainer.querySelectorAll('input[id^="person-"]').forEach(inp => {
       const idx = parseInt(inp.id.replace('person-', ''), 10);
@@ -80,7 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const checked = Array.from(document.querySelectorAll('#friends-pick-list input:checked')).map(c => c.value);
       if (checked.length === 0) return;
 
-      // Preserve any names already typed
       const existing = {};
       peopleNamesContainer.querySelectorAll('input[id^="person-"]').forEach(inp => {
         const idx = parseInt(inp.id.replace('person-', ''), 10);
@@ -92,11 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
       numPeopleInput.value = newNum;
       numPeopleInput.dispatchEvent(new Event('input'));
 
-      // After grid rebuilds (dispatchEvent is synchronous), overlay friend names
-      // starting from slot 0, but only fill empty slots
       let slot = 0;
       checked.forEach(name => {
-        // Find first empty slot, or append
         while (slot < newNum) {
           const el = document.getElementById(`person-${slot}`);
           if (el && el.value.trim() === '') {
@@ -126,12 +121,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const people = Array.from(inputs).map((inp, i) => inp.value.trim() || `Person ${i + 1}`);
 
     try {
-      const activities = JSON.parse(localStorage.getItem('activities')) || [];
+      const activities = getActivities();
       if (editingActivityId) {
         const idx = activities.findIndex(a => a.id === editingActivityId);
         if (idx !== -1) {
           activities[idx] = { ...activities[idx], name: activityName, baseCurrency, people };
-          localStorage.setItem('activities', JSON.stringify(activities));
+          saveActivities(activities);
           editingActivityId = null;
           saveBtn.textContent = 'Save & Continue →';
           showSuccessMessage('Activity updated!');
@@ -143,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
           items: [], dateCreated: new Date().toISOString()
         };
         activities.push(activity);
-        localStorage.setItem('activities', JSON.stringify(activities));
+        saveActivities(activities);
         showSuccessMessage('Activity created!');
         setTimeout(() => window.location.href = `items.html?activity=${activity.id}`, 1200);
       }
@@ -164,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function displayActivities() {
   const container  = document.getElementById('activities-container');
-  const activities = JSON.parse(localStorage.getItem('activities')) || [];
+  const activities = getActivities();
   if (activities.length === 0) {
     container.innerHTML = `<div class="no-activities"><div class="icon">🧾</div><p>No activities yet — create one above!</p></div>`;
     return;
@@ -204,7 +199,7 @@ function showError(msg) {
 }
 
 window.editActivity = function (id) {
-  const activities = JSON.parse(localStorage.getItem('activities')) || [];
+  const activities = getActivities();
   const a = activities.find(x => x.id === id);
   if (!a) return;
   editingActivityId = id;
@@ -224,8 +219,8 @@ window.editActivity = function (id) {
 
 window.deleteActivity = function (id) {
   if (!confirm('Delete this activity and all its items?')) return;
-  let activities = JSON.parse(localStorage.getItem('activities')) || [];
+  let activities = getActivities();
   activities = activities.filter(a => a.id !== id);
-  localStorage.setItem('activities', JSON.stringify(activities));
+  saveActivities(activities);
   displayActivities();
 };

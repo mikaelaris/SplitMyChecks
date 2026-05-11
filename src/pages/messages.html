@@ -750,15 +750,24 @@ function getUser() {
 }
 
 function getFriends() {
-  return JSON.parse(localStorage.getItem('smc_friends') || '[]');
+  return JSON.parse(localStorage.getItem(_friendsKey()) || '[]');
 }
 
+function _userId() {
+  try {
+    const u = JSON.parse(localStorage.getItem('smc_current_user') || 'null');
+    return u ? String(u.id) : 'guest';
+  } catch { return 'guest'; }
+}
+function _convKey()    { return `smc_conversations_${_userId()}`; }
+function _friendsKey() { return `smc_friends_${_userId()}`; }
+
 function getConversations() {
-  return JSON.parse(localStorage.getItem('smc_conversations') || '[]');
+  return JSON.parse(localStorage.getItem(_convKey()) || '[]');
 }
 
 function saveConversations(convs) {
-  localStorage.setItem('smc_conversations', JSON.stringify(convs));
+  localStorage.setItem(_convKey(), JSON.stringify(convs));
 }
 
 function colorFor(name, idx) {
@@ -1214,7 +1223,9 @@ $('confirm-request').addEventListener('click', () => {
 // ── Share debt modal ─────────────────────────────────────────
 $('send-debt-btn').addEventListener('click', () => {
   if (!activeConvId) return;
-  const activities = JSON.parse(localStorage.getItem('activities') || '[]');
+  const user = JSON.parse(localStorage.getItem('smc_current_user') || 'null');
+  const _actKey = 'activities_' + (user ? String(user.id) : 'guest');
+  const activities = JSON.parse(localStorage.getItem(_actKey) || '[]');
   const list = $('debt-activity-list');
   if (activities.length === 0) {
     list.innerHTML = `<p style="color:var(--text-3);font-size:0.85rem;text-align:center;padding:20px;">No activities yet. <a href="setup.html" style="color:var(--brand)">Create one →</a></p>`;

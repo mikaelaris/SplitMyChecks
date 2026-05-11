@@ -5,12 +5,24 @@ const AVATAR_COLORS = ['#FF6B4A','#6C63FF','#22C55E','#F59E0B','#0EA5E9','#EC489
 
 function getUser()     { return JSON.parse(localStorage.getItem('smc_current_user') || 'null'); }
 function saveUser(u)   { localStorage.setItem('smc_current_user', JSON.stringify(u)); }
-function getFriends()  { return JSON.parse(localStorage.getItem('smc_friends') || '[]'); }
-function saveFriends(f){ localStorage.setItem('smc_friends', JSON.stringify(f)); }
-function getPayments() { return JSON.parse(localStorage.getItem('smc_payments') || '[]'); }
-function savePayments(p){ localStorage.setItem('smc_payments', JSON.stringify(p)); }
 function getPrefs()    { return JSON.parse(localStorage.getItem('smc_prefs') || '{}'); }
 function savePrefs(p)  { localStorage.setItem('smc_prefs', JSON.stringify(p)); }
+
+// ── User-scoped storage keys ──────────────────────────────────
+function _userId() {
+  try {
+    const u = JSON.parse(localStorage.getItem('smc_current_user') || 'null');
+    return u ? String(u.id) : 'guest';
+  } catch { return 'guest'; }
+}
+function friendsKey()   { return `smc_friends_${_userId()}`; }
+function paymentsKey()  { return `smc_payments_${_userId()}`; }
+function activitiesKey(){ return `activities_${_userId()}`; }
+
+function getFriends()   { return JSON.parse(localStorage.getItem(friendsKey())  || '[]'); }
+function saveFriends(f) { localStorage.setItem(friendsKey(),  JSON.stringify(f)); }
+function getPayments()  { return JSON.parse(localStorage.getItem(paymentsKey()) || '[]'); }
+function savePayments(p){ localStorage.setItem(paymentsKey(), JSON.stringify(p)); }
 
 // ── Apply saved customisation on every page load ─────────────
 function applyCustomisation() {
@@ -106,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function renderProfileHero() {
   const u = getUser();
-  const activities = JSON.parse(localStorage.getItem('activities') || '[]');
+  const activities = JSON.parse(localStorage.getItem(activitiesKey()) || '[]');
   const initials = (u.displayName || u.first || 'G').split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
   const avatar = document.getElementById('profile-avatar');
   avatar.textContent = initials;
@@ -384,7 +396,7 @@ function setupCustomise() {
 // ── Account tab ──────────────────────────────────────────────
 function renderAccount() {
   const u = getUser();
-  const activities = JSON.parse(localStorage.getItem('activities') || '[]');
+  const activities = JSON.parse(localStorage.getItem(activitiesKey()) || '[]');
   const totalItems = activities.reduce((s, a) => s + (a.items?.length || 0), 0);
   document.getElementById('data-summary').textContent = `${activities.length} activities · ${totalItems} items`;
 
@@ -409,7 +421,7 @@ function setupAccount() {
   // Export data
   document.getElementById('export-data-btn').addEventListener('click', () => {
     const data = {
-      activities: JSON.parse(localStorage.getItem('activities') || '[]'),
+      activities: JSON.parse(localStorage.getItem(activitiesKey()) || '[]'),
       friends: getFriends(),
       payments: getPayments(),
       prefs: getPrefs(),
@@ -435,7 +447,7 @@ function setupAccount() {
     reader.onload = ev => {
       try {
         const data = JSON.parse(ev.target.result);
-        if (data.activities) localStorage.setItem('activities', JSON.stringify(data.activities));
+        if (data.activities) localStorage.setItem(activitiesKey(), JSON.stringify(data.activities));
         if (data.friends)    saveFriends(data.friends);
         if (data.payments)   savePayments(data.payments);
         if (data.prefs)      savePrefs(data.prefs);
@@ -454,7 +466,7 @@ function setupAccount() {
   // Clear data
   document.getElementById('clear-data-btn').addEventListener('click', () => {
     if (!confirm('This will permanently delete all your local activities, items, and settings. Are you sure?')) return;
-    ['activities','smc_friends','smc_payments','smc_prefs'].forEach(k => localStorage.removeItem(k));
+    [activitiesKey(), friendsKey(), paymentsKey(), 'smc_prefs'].forEach(k => localStorage.removeItem(k));
     showToast('All data cleared', 'success');
     setTimeout(() => window.location.reload(), 1000);
   });
@@ -466,7 +478,7 @@ function setupAccount() {
     const u = getUser();
     const filtered = users.filter(x => x.id !== u.id);
     localStorage.setItem('smc_users', JSON.stringify(filtered));
-    ['smc_current_user','activities','smc_friends','smc_payments','smc_prefs'].forEach(k => localStorage.removeItem(k));
+    ['smc_current_user', activitiesKey(), friendsKey(), paymentsKey(), 'smc_prefs'].forEach(k => localStorage.removeItem(k));
     window.location.href = 'index.html';
   });
 }
