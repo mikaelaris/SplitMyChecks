@@ -105,7 +105,7 @@ body {
   border-radius: 50%;
   animation: coinBounce 0.9s ease-in-out infinite;
 }
-.loader-coins span:nth-child(2) { animation-delay: 0.15s; background: var(--accent); }
+.loader-coins span:nth-child(2) { animation-delay: 0.15s; background: var(--brand-light); }
 .loader-coins span:nth-child(3) { animation-delay: 0.3s; }
 
 @keyframes coinBounce {

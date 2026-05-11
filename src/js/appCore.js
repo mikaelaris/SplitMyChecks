@@ -32,6 +32,8 @@ function applyCustomisation() {
     document.documentElement.style.setProperty('--brand-light', adjustHex(hex, 20));
     document.documentElement.style.setProperty('--brand-dark',  adjustHex(hex, -15));
     document.documentElement.style.setProperty('--brand-bg', hex + '14');
+    // Keep --accent in sync so the loader middle dot matches the chosen colour
+    document.documentElement.style.setProperty('--accent', adjustHex(hex, 20));
   }
 
   if (prefs.fontSize) {

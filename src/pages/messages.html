@@ -6,6 +6,7 @@
   <title>Messages — $plitMyChe€ks</title>
   <script src="../js/theme-init.js"></script>
   <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/messages-btn.css">
   <style>
     /* ── Messenger Layout ──────────────────────────────────── */
     .messenger-wrap {
@@ -587,7 +588,10 @@
       <span class="step-num">3</span><span class="step-label">Results</span>
     </a>
   </nav>
-  <div class="header-end">
+    <div class="header-end">
+    <a href="messages.html" class="msg-header-btn active" id="msg-header-btn" title="Messages">
+      💬<span class="msg-badge"></span>
+    </a>
     <a href="profile.html" class="avatar-btn" id="header-avatar" title="Profile">?</a>
     <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
       <span class="theme-toggle-text">🌙</span>
@@ -1365,5 +1369,6 @@ function escapeHtml(str) {
 seedDemoConversations();
 renderSidebar();
 </script>
+<script src="../js/msg-badge-init.js"></script>
 </body>
 </html>
