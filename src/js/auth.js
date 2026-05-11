@@ -27,10 +27,13 @@ const Auth = {
 
   setCurrentUser(user) {
     localStorage.setItem('smc_current_user', JSON.stringify(user));
+    // Let theme-init.js know which user's prefs to load on the next page paint
+    localStorage.setItem('smc_last_user_id', String(user.id));
   },
 
   logout() {
     localStorage.removeItem('smc_current_user');
+    localStorage.removeItem('smc_last_user_id');
     window.location.href = 'index.html';
   },
 
@@ -55,6 +58,7 @@ const Auth = {
 
     users.push(user);
     this.saveUsers(users);
+    // Restore full user object (may have been updated since last login)
     this.setCurrentUser(user);
     return { ok: true, user };
   },
@@ -64,6 +68,7 @@ const Auth = {
     const user = users.find(u => u.email === email);
     if (!user) return { ok: false, msg: 'No account found with that email.' };
     if (user.passwordHash !== this.hashPassword(password)) return { ok: false, msg: 'Incorrect password.' };
+    // Restore full user object (may have been updated since last login)
     this.setCurrentUser(user);
     return { ok: true, user };
   },
@@ -78,6 +83,7 @@ const Auth = {
       isGuest: true,
     };
     this.setCurrentUser(guest);
+    localStorage.setItem('smc_last_user_id', 'guest');
     return guest;
   },
 
@@ -93,10 +99,16 @@ const Auth = {
 
 // ── Page Init ────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  // If already logged in, skip auth page
-  if (Auth.getCurrentUser()) {
+  // If already logged in as a real user, skip auth page.
+  // Guests are NOT redirected — they may be here to create an account.
+  const _existing = Auth.getCurrentUser();
+  if (_existing && !_existing.isGuest) {
     window.location.href = 'setup.html';
     return;
+  }
+  // Clear any stale guest session so the auth page starts clean
+  if (_existing && _existing.isGuest) {
+    localStorage.removeItem('smc_current_user');
   }
 
   // Tab switching

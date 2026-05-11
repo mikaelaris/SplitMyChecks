@@ -745,8 +745,7 @@ const COLORS = ['#FF6B4A','#6C63FF','#22C55E','#F59E0B','#0EA5E9','#EC4899','#14
 const $ = id => document.getElementById(id);
 
 function getUser() {
-  return JSON.parse(localStorage.getItem('smc_current_user') || 'null')
-      || { id: 'guest', displayName: 'You', username: 'guest', avatarColour: '#A09890', isGuest: true };
+  return JSON.parse(localStorage.getItem('smc_current_user') || 'null');
 }
 
 function getFriends() {
@@ -809,9 +808,25 @@ function getCurrencies() {
 }
 
 // ── Theme + avatar init ──────────────────────────────────────
+// Hard guard: block guests and unauthenticated users BEFORE any rendering
+(function () {
+  const _u = JSON.parse(localStorage.getItem('smc_current_user') || 'null');
+  if (!_u || _u.isGuest) {
+    // Immediately stop and redirect — don't run any more script
+    document.addEventListener('DOMContentLoaded', () => {
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;flex-direction:column;gap:12px;"><div style="font-size:2rem;">🔒</div><p style="color:#6B6560;">Messages is for members only.</p><a href="index.html" style="color:#FF6B4A;font-weight:700;">Sign up free →</a></div>';
+    });
+    window.stop && window.stop();
+    throw new Error('Guest access blocked');
+  }
+})();
+
 (function initUI() {
   const user = getUser();
-  const prefs = JSON.parse(localStorage.getItem('smc_prefs') || '{}');
+
+  // Load THIS user's scoped prefs
+  const _prefsKey = user ? `smc_prefs_${String(user.id)}` : 'smc_prefs_guest';
+  const prefs = JSON.parse(localStorage.getItem(_prefsKey) || '{}');
   const theme = prefs.theme
     ? (prefs.theme === 'system' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : prefs.theme)
     : (localStorage.getItem('theme') || 'light');
@@ -825,6 +840,10 @@ function getCurrencies() {
     const next = cur === 'light' ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('theme', next);
+    // Persist in scoped prefs too
+    const _u = getUser(); const _pk = _u ? `smc_prefs_${String(_u.id)}` : 'smc_prefs_guest';
+    const _p = JSON.parse(localStorage.getItem(_pk) || '{}'); _p.theme = next;
+    localStorage.setItem(_pk, JSON.stringify(_p));
     if (ttx) ttx.textContent = next === 'light' ? '🌙' : '☀️';
   });
 
